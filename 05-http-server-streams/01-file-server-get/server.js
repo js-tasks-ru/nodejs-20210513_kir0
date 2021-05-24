@@ -1,6 +1,7 @@
 const url = require('url');
 const http = require('http');
 const path = require('path');
+const fs = require('fs')
 
 const server = new http.Server();
 
@@ -11,6 +12,26 @@ server.on('request', (req, res) => {
 
   switch (req.method) {
     case 'GET':
+      if(/\//.test(pathname)){
+        res.writeHead(400, 'no nesting')
+        res.end()
+      }
+      fs.readFile(filepath, (err, file) => {
+        if (err) {
+         // console.log('нету файла', err);
+          res.writeHead(404, 'file doesnt exist')
+          res.end()
+        } else {
+          //console.log('файл');
+          res.writeHead(200);
+
+          res.write(file)
+          res.end()
+        }
+
+
+      })
+
 
       break;
 
