@@ -1,12 +1,61 @@
+
+const Product = require('../models/Product')
+const { ObjectId } = require('mongoose').Types;
+
+
+
 module.exports.productsBySubcategory = async function productsBySubcategory(ctx, next) {
-  ctx.body = {};
+  let { subcategory } = ctx.request.query
+  if (!subcategory) {
+    next()
+  }
+  if (!ObjectId.isValid(subcategory)) {
+    ctx.status = 400
+    ctx.body = { message: 'invalid subcategory value' }
+    return
+  }
+
+
+  let products = await Product.find({ subcategory })
+  ctx.body = JSON.stringify({ products });
+
+
+
+
+
 };
 
 module.exports.productList = async function productList(ctx, next) {
-  ctx.body = {};
+
+  let products = await Product.find({})
+
+  ctx.body = { products };
 };
 
 module.exports.productById = async function productById(ctx, next) {
-  ctx.body = {};
+
+
+
+  let { id: _id } = ctx.params
+  if (!_id) {
+    ctx.status = 500
+    ctx.body = { message: 'empty param id' }
+    return
+  }
+  if (!ObjectId.isValid(_id)) {
+    ctx.status = 400
+    ctx.body = { message: 'invalid id value' }
+    return
+  }
+  Product.exists({ _id }, (err, product) => {
+    if (err) {
+      ctx.status = 404
+      ctx.body = { message: 'no such product' }
+      return
+    }
+    ctx.body({ product })
+  })
+
+
 };
 
