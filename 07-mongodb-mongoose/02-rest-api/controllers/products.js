@@ -17,10 +17,7 @@ module.exports.productsBySubcategory = async function productsBySubcategory(ctx,
 
 
   let products = await Product.find({ subcategory })
-  ctx.body = JSON.stringify({ products });
-
-
-
+  ctx.body = { products };
 
 
 };
@@ -47,12 +44,13 @@ module.exports.productById = async function productById(ctx, next) {
     ctx.body = { message: 'invalid id value' }
     return
   }
-  Product.exists({ _id }, (err, product) => {
-    if (err) {
+  Product.exists({ _id }, async (err, isExist) => {
+    if (err || !isExist) {
       ctx.status = 404
-      ctx.body = { message: 'no such product' }
+      ctx.body = { message: 'Not Found' }
       return
     }
+    let product = await Product.find({ _id })
     ctx.body({ product })
   })
 
