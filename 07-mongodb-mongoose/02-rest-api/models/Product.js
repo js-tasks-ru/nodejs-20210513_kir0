@@ -30,17 +30,18 @@ const productSchema = new mongoose.Schema({
 
   images: [String],
 
-});
+},
+  {
+    toJSON: {
+      transform(doc, ret) {
+        ret.id = ret._id;
+        delete ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    }
+  });
 
 
-productSchema.virtual('id').get(function () {
-  return this._id.toHexString();
-});
-
-
-
-productSchema.set('toJSON', {
-  virtuals: true
-});
 
 module.exports = connection.model('Product', productSchema);

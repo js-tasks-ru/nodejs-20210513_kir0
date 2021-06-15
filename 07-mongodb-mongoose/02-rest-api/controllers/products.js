@@ -5,10 +5,9 @@ const { ObjectId } = require('mongoose').Types;
 
 
 module.exports.productsBySubcategory = async function productsBySubcategory(ctx, next) {
-  let { subcategory } = ctx.request.query
+  let { subcategory } = ctx.query
   if (!subcategory) {
     return next()
-
   }
   console.log(ObjectId.isValid(subcategory), subcategory, 'azxzxcsdca');
 
@@ -27,32 +26,27 @@ module.exports.productsBySubcategory = async function productsBySubcategory(ctx,
 
 module.exports.productList = async function productList(ctx, next) {
 
-  let products = await Product.find({})
+  let products = await Product.find()
 
   ctx.body = { products };
 };
 
 module.exports.productById = async function productById(ctx, next) {
-
-
-
-  let { id: _id } = ctx.params
-  if (!_id || !ObjectId.isValid(_id)) {
-
+  let { id } = ctx.params
+  if (!id || !ObjectId.isValid(id)) {
     ctx.status = 400
     ctx.body = { message: 'invalid id value' }
     return
   }
 
-  let product = await Product.find({ _id })
-  if (product.length === 0) {
+  let product = await Product.findById(id)
+
+  if (!product) {
     ctx.status = 404
-    ctx.body = { message: 'not found' }
+    ctx.body = { message: 'error to get product by id' }
     return
   }
-  ctx.body = { product: product[0] }
 
-
-
+  ctx.body = { product }
 };
 
