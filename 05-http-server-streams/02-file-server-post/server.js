@@ -42,19 +42,7 @@ server.on('request', (req, res) => {
         } else {
           throw err
         }
-      })
-
-/* 
-      req.on('close', () => {
-        if (!writeStream.writableFinished) {
-          unlink(filepath, () => {
-            writeStream.close();
-          });
-
-        }
-      }); */
-
-
+      }) 
 
 
       req.on('aborted', () => {
